@@ -33,7 +33,8 @@ module.exports = {
             } else {
                 console.log("creep " + creep.name + " is collection energy");
                 target = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
-                result = creep.pickup(RESOURCE_ENERGY);
+                result = creep.pickup(target);
+                console.log(result);
             }
 
             if (result === ERR_NOT_IN_RANGE) {

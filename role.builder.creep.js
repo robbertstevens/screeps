@@ -15,6 +15,6 @@ module.exports = {
     },
 
     work: function () {
-        console.log('WIP');
+        //console.log('WIP');
     }
 };
