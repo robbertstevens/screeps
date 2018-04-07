@@ -5,7 +5,6 @@ global.MAX_HARVESTERS = 1;
 global.MAX_COLLECTORS = 1;
 global.MAX_BUILDERS = 1;
 
-
 module.exports.loop = function () {
     operator.cleanUp();
     operator.work();

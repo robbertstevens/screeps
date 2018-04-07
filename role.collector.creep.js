@@ -1,11 +1,9 @@
 module.exports = {
     role: "collector",
     spawnAtSpawn: function (spawn) {
-        var collectors = _.filter(Game.creeps, {
-            memory: {role: this.role}
-        });
+        var collectors = this.getAll();
 
-        if (collectors.length > MAX_COLLECTORS) {
+        if (collectors.length >= MAX_COLLECTORS) {
             return;
         }
 
@@ -17,24 +15,18 @@ module.exports = {
     },
 
     work: function () {
-        var collectors = _.filter(Game.creeps, {
-            memory: {role: this.role}
-        });
-
-        collectors.forEach(function (creep) {
-
+        this.getAll().forEach(function (creep) {
             var result = undefined;
             var target = undefined;
 
             if (creep.carry.energy === creep.carryCapacity) {
-                console.log("creep " + creep.name + " is full");
+                //console.log("creep " + creep.name + " is full");
                 target = Game.spawns['Spawn1'];
                 result = creep.transfer(target, RESOURCE_ENERGY);
             } else {
                 console.log("creep " + creep.name + " is collection energy");
                 target = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
                 result = creep.pickup(target);
-                console.log(result);
             }
 
             if (result === ERR_NOT_IN_RANGE) {
@@ -42,6 +34,12 @@ module.exports = {
                 creep.moveTo(target)
             }
 
+        });
+    },
+
+    getAll: function () {
+        return _.filter(Game.creeps, {
+            memory: {role: this.role}
         });
     }
 };

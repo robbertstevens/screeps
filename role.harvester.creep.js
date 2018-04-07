@@ -5,7 +5,7 @@ module.exports = {
             memory: {role: this.role}
         });
 
-        if (harvesters.length > MAX_HARVESTERS) {
+        if (harvesters.length >= MAX_HARVESTERS) {
             return;
         }
         var body = [WORK, MOVE, MOVE];
@@ -15,9 +15,7 @@ module.exports = {
     },
 
     work: function () {
-        var harvesters = _.filter(Game.creeps, {
-            memory: {role: this.role}
-        });
+        var harvesters = this.getAll();
 
         harvesters.forEach(function (creep) {
             var target = creep.memory.target;
@@ -34,6 +32,11 @@ module.exports = {
                 creep.moveTo(target)
             }
 
+        });
+    },
+    getAll: function () {
+        return _.filter(Game.creeps, {
+            memory: {role: this.role}
         });
     }
 };
