@@ -15,34 +15,32 @@ module.exports = {
         spawn.spawnCreep(body, name, {memory: {role: this.role}});
     },
 
-    work: function () {
-        this.getAll().forEach(function (creep) {
-            var result = undefined;
-            var target = undefined;
-            switch (creep.memory.state) {
-                case STATE_BUILDING:
-                    target = creep.room.controller;
-                    result = creep.upgradeController(target);
-                    break;
-                case STATE_REFILL:
-                    target = Game.spawns['Spawn1'];
-                    result = creep.withdraw(target, RESOURCE_ENERGY);
-                    break;
-                default:
-                    creep.memory.state = STATE_REFILL;
-                    break;
-            }
-
-            if (result === ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
-            }
-            if (result === ERR_NOT_ENOUGH_ENERGY) {
+    work: function (creep) {
+        var result = undefined;
+        var target = undefined;
+        switch (creep.memory.state) {
+            case STATE_BUILDING:
+                target = creep.room.controller;
+                result = creep.upgradeController(target);
+                break;
+            case STATE_REFILL:
+                target = Game.spawns['Spawn1'];
+                result = creep.withdraw(target, RESOURCE_ENERGY);
+                break;
+            default:
                 creep.memory.state = STATE_REFILL;
-            }
-            if (result === ERR_FULL) {
-                creep.memory.state = STATE_BUILDING;
-            }
-        });
+                break;
+        }
+
+        if (result === ERR_NOT_IN_RANGE) {
+            creep.moveTo(target);
+        }
+        if (result === ERR_NOT_ENOUGH_ENERGY) {
+            creep.memory.state = STATE_REFILL;
+        }
+        if (result === ERR_FULL) {
+            creep.memory.state = STATE_BUILDING;
+        }
     },
 
     getAll: function () {

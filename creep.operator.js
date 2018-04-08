@@ -1,12 +1,26 @@
-var harvesters = require('role.harvester.creep');
-var collectors = require('role.collector.creep');
-var builders = require('role.builder.creep');
+var harvester = require('role.harvester.creep');
+var collector = require('role.collector.creep');
+var builder = require('role.builder.creep');
+
+const ROLE_HARVESTER = 'harvester';
+const ROLE_BUILDER = 'builder';
+const ROLE_COLLECTOR = 'collector';
 
 module.exports = {
     work: function () {
-        harvesters.work();
-        collectors.work();
-        builders.work();
+        _.values(Game.creeps).forEach(function(creep) {
+            if (creep.memory.role == ROLE_HARVESTER) {
+                harvester.work(creep);
+            }
+
+            if (creep.memory.role == ROLE_BUILDER) {
+                builder.work(creep);
+            }
+
+            if (creep.memory.role == ROLE_COLLECTOR) {
+                collector.work(creep);
+            }
+        });
     },
 
     cleanUp: function () {
