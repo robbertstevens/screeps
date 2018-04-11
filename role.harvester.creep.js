@@ -11,7 +11,12 @@ module.exports = {
         var body = [WORK, MOVE, MOVE];
         var name = "H" + Game.time;
 
-        spawn.spawnCreep(body, name, {memory: {role: this.role}});
+        spawn.spawnCreep(body, name, {
+            memory: {
+                role: this.role,
+                state: STATE_IDLE
+            }
+        });
     },
 
     work: function (creep) {
