@@ -11,6 +11,9 @@ global.ROLE_HARVESTER = 'harvester';
 global.ROLE_HARVESTER = 'harvester';
 
 global.STATE_IDLE = 0;
+global.STATE_HARVEST = 1;
+global.STATE_TRANSFER = 2;
+global.STATE_UPGRADE = 3;
 
 module.exports.loop = function () {
     operator.cleanUp();

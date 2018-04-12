@@ -1,10 +1,15 @@
 var harvester = require('role.harvester.creep');
 var collector = require('role.collector.creep');
 var builder = require('role.builder.creep');
+var farmer = require('role.farmer.creep');
 
 module.exports = {
     work: function () {
         _.values(Game.creeps).forEach(function(creep) {
+
+            if (creep.memory.role === ROLE_FARMER) {
+                farmer.work(creep);
+            }
             // if (creep.memory.role == ROLE_HARVESTER) {
             //     harvester.work(creep);
             // }
@@ -22,7 +27,6 @@ module.exports = {
     cleanUp: function () {
         for (var name in Memory.creeps) {
             if (!Game.creeps[name]) {
-                Memory.roles[Memory.creeps[name].type] -= 1;
                 delete Memory.creeps[name];
 
                 console.log('Clearing non-existing creep memory:', name);

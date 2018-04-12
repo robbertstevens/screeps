@@ -17,10 +17,12 @@ module.exports = {
      * @param role
      */
     shouldSpawn: function (role) {
-        var creeps = _.filter(Game.creeps, {
-            memory: {role: role}
-        });
-        return creeps.length < 1;
+        switch (role) {
+            case ROLE_FARMER:
+                return farmer.shouldSpawn();
+            default:
+                return false;
+        }
     },
     /**
      *
@@ -34,8 +36,10 @@ module.exports = {
 
         spawn.spawnCreep(body, name, {
             memory: {
-                role: this.role,
-                state: STATE_IDLE
+                role: role,
+                state: STATE_IDLE,
+                target: undefined,
+                home: spawn.id
             }
         });
     }
