@@ -1,6 +1,6 @@
 // var harvesters = require('role.harvester.creep');
 // var collectors = require('role.collector.creep');
-// var builders = require('role.builder.creep');
+var builder = require('role.builder.creep');
 var farmer = require('role.farmer.creep');
 
 module.exports = {
@@ -8,6 +8,7 @@ module.exports = {
         var spawn = Game.spawns[_.findKey(Game.spawns)];
         
         this.spawnAtSpawn(spawn, farmer.role, farmer.getBody());
+        this.spawnAtSpawn(spawn, builder.role, builder.getBody());
         // this.spawnAtSpawn(spawn, farmer.role, farmer.getBody());
         // this.spawnAtSpawn(spawn, farmer.role, farmer.getBody());
 
@@ -20,6 +21,8 @@ module.exports = {
         switch (role) {
             case ROLE_FARMER:
                 return farmer.shouldSpawn();
+            case ROLE_BUILDER:
+                return builder.shouldSpawn();
             default:
                 return false;
         }
@@ -33,8 +36,7 @@ module.exports = {
             return;
         }
         var name = role + "-" + Game.time;
-
-        spawn.spawnCreep(body, name, {
+        var action = spawn.spawnCreep(body, name, {
             memory: {
                 role: role,
                 state: STATE_IDLE,
@@ -42,5 +44,13 @@ module.exports = {
                 home: spawn.id
             }
         });
+
+        if (action === OK) {
+            if (Memory.roles[role]) {
+
+                Memory.roles[role] = 0;
+            }
+            Memory.roles[role] += 1;
+        }
     }
 };

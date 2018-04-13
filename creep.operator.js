@@ -10,6 +10,10 @@ module.exports = {
             if (creep.memory.role === ROLE_FARMER) {
                 farmer.work(creep);
             }
+
+            if (creep.memory.role === ROLE_BUILDER) {
+                builder.work(creep);
+            }
             // if (creep.memory.role == ROLE_HARVESTER) {
             //     harvester.work(creep);
             // }

@@ -1,51 +1,51 @@
-const STATE_REFILL = 1;
-const STATE_BUILDING = 2;
-
 module.exports = {
     role: "builder",
-    spawnAtSpawn: function (spawn) {
-        var builders = this.getAll();
+    getBody: function() {
+        return [WORK, CARRY, MOVE, MOVE];
+    },
+    shouldSpawn: function() {
+        var creeps = _.filter(Game.creeps, {
+            memory: {role: this.role}
+        });
 
-        if (builders.length >= MAX_BUILDERS) {
-            return;
+        if (Memory.roles[ROLE_FARMER] === 0) {
+            return false;
         }
-        var body = [WORK, CARRY, MOVE, MOVE];
-        var name = "B" + Game.time;
 
-        spawn.spawnCreep(body, name, {memory: {role: this.role}});
+        return creeps.length < Math.ceil(Game.gcl.level * 3.25);
     },
 
     work: function (creep) {
-        var result = undefined;
-        var target = undefined;
-        switch (creep.memory.state) {
-            case STATE_BUILDING:
-                target = creep.room.controller;
-                result = creep.upgradeController(target);
-                break;
-            case STATE_REFILL:
-                target = Game.spawns['Spawn1'];
-                result = creep.withdraw(target, RESOURCE_ENERGY);
-                break;
-            default:
-                creep.memory.state = STATE_REFILL;
-                break;
+        if (creep.memory.state === STATE_IDLE) {
+            creep.memory.target = creep.memory.home; //creep.pos.findClosestByPath(FIND_MY_SPAWNS).id;
+            creep.memory.state = STATE_WITHDRAW;
+
         }
 
-        if (result === ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+        if (creep.memory.state === STATE_WITHDRAW) {
+            var action = creep.withdraw(Game.getObjectById(creep.memory.target), RESOURCE_ENERGY);
+            if (action === ERR_NOT_IN_RANGE) {
+                creep.moveTo(Game.getObjectById(creep.memory.target));
+            }
+            if (creep.carry.energy === creep.carryCapacity) {
+                creep.memory.target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES).id;
+                creep.memory.state = STATE_BUILDING;
+            }
         }
-        if (result === ERR_NOT_ENOUGH_ENERGY) {
-            creep.memory.state = STATE_REFILL;
-        }
-        if (result === ERR_FULL) {
-            creep.memory.state = STATE_BUILDING;
-        }
-    },
 
-    getAll: function () {
-        return _.filter(Game.creeps, {
-            memory: {role: this.role}
-        });
+        if (creep.memory.state === STATE_BUILDING) {
+            var action = creep.build(Game.getObjectById(creep.memory.target));
+
+            if (action === ERR_NOT_IN_RANGE) {
+                creep.moveTo(Game.getObjectById(creep.memory.target));
+            }
+            if (action === ERR_INVALID_TARGET) {
+                creep.memory.state = STATE_IDLE;
+            }
+            if (creep.carry.energy < 1) {
+                creep.memory.state = STATE_IDLE;
+            }
+        }
+
     }
 };
